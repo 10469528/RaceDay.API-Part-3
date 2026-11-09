@@ -1,0 +1,96 @@
+﻿@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RaceDay</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/RaceDay.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="bg-light">
+    <header>
+        <!-- 👇 Dark Sporty Gradient Navbar 👇 -->
+        <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand fw-bold fs-4 text-warning" asp-area="" asp-controller="Home" asp-action="Index">
+                    🏃 RaceDay
+                </a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+
+                        @if (Context.Session.GetString("JWToken") == null)
+                        {
+                            <!-- Not logged in -->
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Account" asp-action="Register">Register</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <!-- Logged in -->
+                            var role = Context.Session.GetString("UserRole");
+
+                            if (role == "Organiser")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-light fw-bold" asp-controller="Organiser" asp-action="Index">📊 Dashboard</a>
+                                </li>
+                                <li class="nav-item ms-2">
+                                    <!-- Make this look like an action button -->
+                                    <a class="btn btn-warning btn-sm fw-bold mt-1 shadow-sm" asp-controller="Events" asp-action="Create">+ Create Event</a>
+                                </li>
+                            }
+                            else if (role == "Participant")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-light fw-bold" asp-controller="Enrolments" asp-action="MyEnrolments">🎽 My Enrolments</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light fw-bold" asp-controller="Enrolments" asp-action="MyResults">🏆 My Results</a>
+                                </li>
+                            }
+
+                            <!-- Logout Button -->
+                            <li class="nav-item ms-auto">
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-light btn-sm mt-1">Logout</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container mt-4 min-vh-100">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- 👇 Dark Footer 👇 -->
+    <footer class="border-top border-secondary py-3 mt-auto text-center" style="background-color: #0f2027; color: #b0b0b0;">
+        <div class="container">
+            &copy; 2026 - RaceDay - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-warning text-decoration-none">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
